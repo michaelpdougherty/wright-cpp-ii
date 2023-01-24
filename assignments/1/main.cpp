@@ -1,3 +1,10 @@
+/* Michael Dougherty
+ * Prof. Edwin Whitfield 
+ * CIS 242
+ * 23 Jan 2023
+ * 
+ * Assignment 1 - Computes Roman numerals between 0 and 4000
+*/
 #include <iostream>
 #include <string>
 #include <map>
