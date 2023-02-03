@@ -104,13 +104,13 @@ class Race {
 
     void run() {
       fireGun();
-
       do {
         this->printTrack();
         Racer *racers[] = { this->racer1, this->racer2 };
         for (int i = 0; i < 2; i++) {
           Racer *racer = racers[i];
-          racer->position += rand() % 10 + 1;
+          MOVE_TYPE selection = racer->moveset[rand() % 10 + 1];
+          racer->position += MOVES[selection];
           if (racer->position > Race::FINISH_LINE) {
             racer->position = Race::FINISH_LINE;
             if (!this->hasWinner) {
@@ -120,7 +120,6 @@ class Race {
           }
         }
       } while (!this->hasWinner);
-
       cout << "FLASH!!!\n";
       this->printTrack();
       cout << this->winner->winMessage << endl;
@@ -130,7 +129,7 @@ class Race {
 int main() {
   srand(static_cast<unsigned int>(time(NULL)));
   Racer tortoise = Racer("TORTOISE", tortoise_moves, "TORTOISE WINS!!! YAY!!");
-  Racer hare = Racer("HARE", hare_moves, "Hare wins.");
+  Racer hare = Racer("HARE", hare_moves, "Hare wins. Yuck.");
   Race race = Race(&tortoise, &hare);
   race.run();
 }
