@@ -3,54 +3,73 @@
 #include <string>
 using namespace std;
 
-void printTrack(int, int);
-void printSingleTrack(char, int);
+class Racer {
+  public:
+    Racer(string name) {
+      this->name = name;
+      this->initial = name[0];
+    }
+    string name;
+    char initial;
+    int position = 0;
+};
 
-const int TRACK_LENGTH = 70;
+class Race {
+  public:
+    bool hasWinner = false;
+    static const int TRACK_LENGTH = 70;
+    string winner;
+    Racer *racer1;
+    Racer *racer2;
+    void printTrack() {
+      for (int i = 0; i < Race::TRACK_LENGTH; i++) {
+        cout << '[';
+        if (i == racer1->position) {
+          cout << racer1->initial;
+        }
+        if (i == racer2->position) {
+          cout << racer2->initial;
+        }
+        cout << ']';
+      }
+      cout << endl;
+    }
+};
 
-int main() {
+void init() {
   srand(static_cast<unsigned int>(time(NULL)));
   cout << "BANG!!!!!" << endl;
   cout << "AND THEY'RE OFF!!!!!" << endl;
-  
-  int harePosition = 0, tortoisePosition = 0;
-  bool isWinner = false;
-  string winner;
+}
+
+int main() {
+  init();
+  Racer hare = Racer("HARE");
+  Racer tortoise = Racer("TORTOISE");
+
+  Race race;
+  race.racer1 = &hare;
+  race.racer2 = &tortoise;
   do {
-    printTrack(harePosition, tortoisePosition);
-    if (harePosition < TRACK_LENGTH - 1) {
-      harePosition += rand() % 10 + 1;
+    race.printTrack();
+    if (hare.position < Race::TRACK_LENGTH - 1) {
+      hare.position += rand() % 10 + 1;
     }
-    if (harePosition > TRACK_LENGTH - 1) {
-      harePosition = TRACK_LENGTH - 1;
-      isWinner = true;
-      winner = "HARE";
+    if (hare.position > Race::TRACK_LENGTH - 1) {
+      hare.position = Race::TRACK_LENGTH - 1;
+      race.hasWinner = true;
+      race.winner = "HARE";
     }
-    if (tortoisePosition < TRACK_LENGTH - 1) {
-      tortoisePosition += rand() % 10 + 1;
+    if (tortoise.position < Race::TRACK_LENGTH - 1) {
+      tortoise.position += rand() % 10 + 1;
     }
-    if (tortoisePosition > TRACK_LENGTH - 1) {
-      tortoisePosition = TRACK_LENGTH - 1;
-      isWinner = true;
-      winner = "TORTOISE";
+    if (tortoise.position > Race::TRACK_LENGTH - 1) {
+      tortoise.position = Race::TRACK_LENGTH - 1;
+      race.hasWinner = true;
+      race.winner = "TORTOISE";
     }
-  } while (!isWinner);
-  cout << winner << " WINS!!!" << endl;
+  } while (!race.hasWinner);
+  race.printTrack();
+  cout << race.winner << " WINS!!!" << endl;
   return(0);
-}
-
-void printTrack(int harePosition, int tortoisePosition) {
-  printSingleTrack('H', harePosition);
-  printSingleTrack('T', tortoisePosition);
-}
-
-void printSingleTrack(char signifier, int position) {
-  for (int i = 0; i < TRACK_LENGTH; i++) {
-    cout << '[';
-    if (i == position) {
-      cout << signifier;
-    }
-    cout << ']';
-  }
-  cout << endl;
 }
