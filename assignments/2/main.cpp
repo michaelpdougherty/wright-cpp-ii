@@ -1,3 +1,6 @@
+/**
+* Mike Dougherty - CIS 242 - Assignment 2 - 2 February 2023
+*/
 #include <iostream>
 #include <iomanip>
 #include <cmath>
@@ -15,6 +18,7 @@ enum MOVE_TYPE {
   SMALL_HOP,
   SMALL_SLIP,
 };
+
 map<MOVE_TYPE, int> MOVES = {
   { FAST_PLOD, 3 },
   { SLIP, -6 },
@@ -27,6 +31,7 @@ map<MOVE_TYPE, int> MOVES = {
 };
 
 typedef map<int, MOVE_TYPE> Moveset;
+
 Moveset hare_moves = {
   {1, SLEEP},
   {2, SLEEP},
@@ -39,6 +44,7 @@ Moveset hare_moves = {
   {9, SMALL_SLIP},
   {10, SMALL_SLIP},
 };
+
 Moveset tortoise_moves = {
   {1, FAST_PLOD},
   {2, FAST_PLOD},
