@@ -63,7 +63,7 @@ class Racer {
       this->moveset = moveset;
       this->winMessage = winMessage;
     }
-    int position = 0;
+    int position = 1;
     string name;
     char initial;
     Moveset moveset;
@@ -72,34 +72,35 @@ class Racer {
 
 class Race {
   static const int TRACK_LENGTH = 70;
-  static const int FINISH_LINE = 69;
+  bool hasWinner = false;
+  Racer *winner;
+  Racer *racer1;
+  Racer *racer2;
+
+  void printTrack() {
+    for (int i = 1; i <= Race::TRACK_LENGTH; i++) {
+      cout << '[';
+      if (i == racer1->position && i == racer2->position) {
+        cout << "!!";
+      } else if (i == racer1->position) {
+        cout << racer1->initial;
+      } else if (i == racer2->position) {
+        cout << racer2->initial;
+      }
+      cout << ']';
+    }
+    cout << endl;
+  }
+
+  void fireGun() {
+    cout << "BANG!!!!!" << endl;
+    cout << "AND THEY'RE OFF!!!!!" << endl;
+  }
+
   public:
     Race(Racer *racer1, Racer *racer2) {
       this->racer1 = racer1;
       this->racer2 = racer2;
-    }
-    bool hasWinner = false;
-    Racer *winner;
-    Racer *racer1;
-    Racer *racer2;
-    void printTrack() {
-      for (int i = 0; i < Race::TRACK_LENGTH; i++) {
-        cout << '[';
-        if (i == racer1->position && i == racer2->position) {
-          cout << "OUCH!!";
-        } else if (i == racer1->position) {
-          cout << racer1->initial;
-        } else if (i == racer2->position) {
-          cout << racer2->initial;
-        }
-        cout << ']';
-      }
-      cout << endl;
-    }
-
-    void fireGun() {
-      cout << "BANG!!!!!" << endl;
-      cout << "AND THEY'RE OFF!!!!!" << endl;
     }
 
     void run() {
@@ -111,16 +112,17 @@ class Race {
           Racer *racer = racers[i];
           MOVE_TYPE selection = racer->moveset[rand() % 10 + 1];
           racer->position += MOVES[selection];
-          if (racer->position > Race::FINISH_LINE) {
-            racer->position = Race::FINISH_LINE;
+          if (racer->position > Race::TRACK_LENGTH) {
+            racer->position = Race::TRACK_LENGTH;
             if (!this->hasWinner) {
               this->hasWinner = true;
               this->winner = racer;
             }
+          } else if (racer->position < 1) {
+            racer->position = 1;
           }
         }
       } while (!this->hasWinner);
-      cout << "FLASH!!!\n";
       this->printTrack();
       cout << this->winner->winMessage << endl;
     }
