@@ -15,7 +15,6 @@ enum MOVE_TYPE {
   SMALL_HOP,
   SMALL_SLIP,
 };
-
 map<MOVE_TYPE, int> MOVES = {
   { FAST_PLOD, 3 },
   { SLIP, -6 },
@@ -28,7 +27,6 @@ map<MOVE_TYPE, int> MOVES = {
 };
 
 typedef map<int, MOVE_TYPE> Moveset;
-
 Moveset hare_moves = {
   {1, SLEEP},
   {2, SLEEP},
@@ -41,7 +39,6 @@ Moveset hare_moves = {
   {9, SMALL_SLIP},
   {10, SMALL_SLIP},
 };
-
 Moveset tortoise_moves = {
   {1, FAST_PLOD},
   {2, FAST_PLOD},
@@ -81,7 +78,7 @@ class Race {
     for (int i = 1; i <= Race::TRACK_LENGTH; i++) {
       cout << '[';
       if (i == racer1->position && i == racer2->position) {
-        cout << "!!";
+        cout << "OUCH!!";
       } else if (i == racer1->position) {
         cout << racer1->initial;
       } else if (i == racer2->position) {
@@ -106,25 +103,25 @@ class Race {
     void run() {
       fireGun();
       do {
-        this->printTrack();
-        Racer *racers[] = { this->racer1, this->racer2 };
+        printTrack();
+        Racer *racers[] = { racer1, racer2 };
         for (int i = 0; i < 2; i++) {
           Racer *racer = racers[i];
           MOVE_TYPE selection = racer->moveset[rand() % 10 + 1];
           racer->position += MOVES[selection];
           if (racer->position > Race::TRACK_LENGTH) {
             racer->position = Race::TRACK_LENGTH;
-            if (!this->hasWinner) {
-              this->hasWinner = true;
-              this->winner = racer;
+            if (!hasWinner) {
+              hasWinner = true;
+              winner = racer;
             }
           } else if (racer->position < 1) {
             racer->position = 1;
           }
         }
-      } while (!this->hasWinner);
-      this->printTrack();
-      cout << this->winner->winMessage << endl;
+      } while (!hasWinner);
+      printTrack();
+      cout << winner->winMessage << endl;
     }
 };
 
