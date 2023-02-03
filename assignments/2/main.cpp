@@ -111,7 +111,7 @@ class Race {
           racer->position += MOVES[selection];
           if (racer->position > Race::TRACK_LENGTH) {
             racer->position = Race::TRACK_LENGTH;
-            if (!hasWinner) {
+            if (!hasWinner || winner->name == "HARE") {
               hasWinner = true;
               winner = racer;
             }
