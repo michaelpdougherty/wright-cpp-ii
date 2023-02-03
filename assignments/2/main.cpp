@@ -27,7 +27,9 @@ map<MOVE_TYPE, int> MOVES = {
   { SMALL_SLIP, -2 },
 };
 
-map<int, MOVE_TYPE> hare_moves = {
+typedef map<int, MOVE_TYPE> Moveset;
+
+Moveset hare_moves = {
   {1, SLEEP},
   {2, SLEEP},
   {3, BIG_HOP},
@@ -40,7 +42,7 @@ map<int, MOVE_TYPE> hare_moves = {
   {10, SMALL_SLIP},
 };
 
-map<int, MOVE_TYPE> tortoise_moves = {
+Moveset tortoise_moves = {
   {1, FAST_PLOD},
   {2, FAST_PLOD},
   {3, FAST_PLOD},
@@ -55,7 +57,7 @@ map<int, MOVE_TYPE> tortoise_moves = {
 
 class Racer {
   public:
-    Racer(string name, map<int, MOVE_TYPE> moveset, string winMessage) {
+    Racer(string name, Moveset moveset, string winMessage) {
       this->name = name;
       this->initial = name[0];
       this->moveset = moveset;
@@ -64,25 +66,25 @@ class Racer {
     int position = 0;
     string name;
     char initial;
-    map<int, MOVE_TYPE> moveset;
+    Moveset moveset;
     string winMessage;
 };
 
 class Race {
+  static const int TRACK_LENGTH = 70;
+
   public:
-    Race(Racer *tortoise, Racer *hare) {
-      this->racer1 = tortoise;
-      this->racer2 = hare;
+    Race(Racer *racer1, Racer *racer2) {
+      this->racer1 = racer1;
+      this->racer2 = racer2;
     }
     bool hasWinner = false;
-    static const int TRACK_LENGTH = 70;
     Racer *winner;
     Racer *racer1;
     Racer *racer2;
     void printTrack() {
       for (int i = 0; i < Race::TRACK_LENGTH; i++) {
         cout << '[';
-        // cout << setw(4) << left;
         if (i == racer1->position && i == racer2->position) {
           cout << "OUCH!!";
         } else if (i == racer1->position) {
@@ -123,10 +125,8 @@ class Race {
 
 int main() {
   srand(static_cast<unsigned int>(time(NULL)));
-
-  Racer hare = Racer("HARE", hare_moves, "Hare wins.");
   Racer tortoise = Racer("TORTOISE", tortoise_moves, "TORTOISE WINS!!! YAY!!");
-
-  Race race = Race(&hare, &tortoise);
+  Racer hare = Racer("HARE", hare_moves, "Hare wins.");
+  Race race = Race(&tortoise, &hare);
   race.run();
 }
