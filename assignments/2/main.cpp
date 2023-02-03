@@ -72,7 +72,7 @@ class Racer {
 
 class Race {
   static const int TRACK_LENGTH = 70;
-
+  static const int FINISH_LINE = 69;
   public:
     Race(Racer *racer1, Racer *racer2) {
       this->racer1 = racer1;
@@ -96,27 +96,31 @@ class Race {
       }
       cout << endl;
     }
+
     void fireGun() {
       cout << "BANG!!!!!" << endl;
       cout << "AND THEY'RE OFF!!!!!" << endl;
     }
+
     void run() {
       fireGun();
+
       do {
         this->printTrack();
-        racer1->position += rand() % 10 + 1;
-        racer2->position += rand() % 10 + 1;
-        if (racer1->position > Race::TRACK_LENGTH - 1) {
-          racer1->position = Race::TRACK_LENGTH - 1;
-          this->hasWinner = true;
-          this->winner = racer1;
-        }
-        if (racer2->position > Race::TRACK_LENGTH - 1) {
-          racer2->position = Race::TRACK_LENGTH - 1;
-          this->hasWinner = true;
-          this->winner = racer2;
+        Racer *racers[] = { this->racer1, this->racer2 };
+        for (int i = 0; i < 2; i++) {
+          Racer *racer = racers[i];
+          racer->position += rand() % 10 + 1;
+          if (racer->position > Race::FINISH_LINE) {
+            racer->position = Race::FINISH_LINE;
+            if (!this->hasWinner) {
+              this->hasWinner = true;
+              this->winner = racer;
+            }
+          }
         }
       } while (!this->hasWinner);
+
       cout << "FLASH!!!\n";
       this->printTrack();
       cout << this->winner->winMessage << endl;
