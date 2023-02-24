@@ -48,15 +48,40 @@ class Shakey : public WorldObject {
       return directions[facingDirection];
     }
     char getSymbol() {
-      string facingDirection = getFacingDirection();
-      if (facingDirection == "NORTH") {
+      string strFacingDirection = getFacingDirection();
+      if (strFacingDirection == "NORTH") {
           return '^';
-      } else if (facingDirection == "SOUTH") {
+      } else if (strFacingDirection == "SOUTH") {
         return 'v';
-      } else if (facingDirection == "EAST") {
+      } else if (strFacingDirection == "EAST") {
         return '>';
       } else {
         return '<';
+      }
+    }
+    void turnRight() {
+      string strFacingDirection = getFacingDirection();
+      if (strFacingDirection == "NORTH") {
+        facingDirection = EAST;
+      } else if (strFacingDirection == "EAST") {
+        facingDirection = SOUTH;
+      } else if (strFacingDirection == "SOUTH") {
+        facingDirection = WEST;
+      } else {
+        facingDirection = NORTH;
+      }
+    }
+
+    void turnLeft() {
+      string strFacingDirection = getFacingDirection();
+      if (strFacingDirection == "NORTH") {
+        facingDirection = WEST;
+      } else if (strFacingDirection == "WEST") {
+        facingDirection = SOUTH;
+      } else if (strFacingDirection == "SOUTH") {
+        facingDirection = EAST;
+      } else {
+        facingDirection = NORTH;
       }
     }
 };
@@ -65,7 +90,6 @@ typedef WorldObject * WorldMap[10][10];
 
 int main() {
   cout << "Starting...\n";
-  system("clear");
 
   // declare map scheme
   char mapScheme[10][10] = {
@@ -84,6 +108,7 @@ int main() {
   // declare world map
   WorldMap worldMap;
 
+  // initialize shakey in global scope
   Shakey myShakey;
 
   // fill map according to map scheme
@@ -106,22 +131,32 @@ int main() {
     }
   }
 
-  // print map
-  for (int x = 0; x < 10; x++) {
-    for (int y = 0; y < 10; y++) {
-      cout << ' ' << (worldMap[x][y])->getSymbol() << ' ';
-    }
-    cout << endl;
-  }
-
-  cout << "\n\n";
-
-  cout << "Shakey is facing: " << myShakey.getFacingDirection() << endl;
-  cout << "Please enter a command: ";
+  // run loop
   string cmd;
-  cin >> cmd;
+  do {
+    system("clear");
+    // print map
+    for (int x = 0; x < 10; x++) {
+      for (int y = 0; y < 10; y++) {
+        cout << ' ' << (worldMap[x][y])->getSymbol() << ' ';
+      }
+      cout << endl;
+    }
 
-  cout << "You entered: " << cmd << endl;
+    cout << "\n\n";
+
+    cout << "Shakey is facing: " << myShakey.getFacingDirection() << endl;
+    cout << "Please enter a command: ";
+    cin >> cmd;
+
+    cout << "You entered: " << cmd << endl;
+
+    if (cmd == "right") {
+      myShakey.turnRight();
+    } else if (cmd == "left") {
+      myShakey.turnLeft();
+    }
+  } while (cmd != "exit");
 
   cout << "Done.\n";
   return 0;
