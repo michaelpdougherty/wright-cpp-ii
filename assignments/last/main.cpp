@@ -41,12 +41,28 @@ class Space : public WorldObject {
     }
 };
 
+class Position {
+  int x = 0;
+  int y = 0;
+  public:
+    Position() {}
+    Position(int x, int y) {
+      this->x = x;
+      this->y = y;
+    }
+    void print() {
+      cout << "[" << x << ", " << y << "]\n";
+    }
+};
+
 class Shakey : public WorldObject {
   NSEW facingDirection = NORTH;
+  Position position;
   public:
     string getFacingDirection() {
       return directions[facingDirection];
     }
+
     char getSymbol() {
       string strFacingDirection = getFacingDirection();
       if (strFacingDirection == "NORTH") {
@@ -59,6 +75,11 @@ class Shakey : public WorldObject {
         return '<';
       }
     }
+
+    void setPosition(int x, int y) {
+      this->position = Position(x, y);
+    }
+
     void turnRight() {
       string strFacingDirection = getFacingDirection();
       if (strFacingDirection == "NORTH") {
@@ -83,6 +104,13 @@ class Shakey : public WorldObject {
       } else {
         facingDirection = NORTH;
       }
+    }
+
+    void giveInfo() {
+      cout << "Here's what Shakey knows:\n";
+      cout << "Current position:\n";
+      position.print();
+      cout << "Facing object: ???\n";
     }
 };
 
@@ -126,6 +154,7 @@ int main() {
           break;
         case 'S':
           worldMap[x][y] = &myShakey;
+          myShakey.setPosition(x, y);
           break;
       }
     }
@@ -155,6 +184,9 @@ int main() {
       myShakey.turnRight();
     } else if (cmd == "left") {
       myShakey.turnLeft();
+    } else if (cmd == "info") {
+      myShakey.giveInfo();
+      return 0;
     }
   } while (cmd != "exit");
 
