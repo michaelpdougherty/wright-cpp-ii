@@ -53,7 +53,15 @@ class Position {
     void print() {
       cout << "[" << x << ", " << y << "]\n";
     }
+    int getX() {
+        return this->x;
+    }
+    int getY() {
+        return this->y;
+    }
 };
+
+typedef WorldObject * WorldMap[10][10];
 
 class Shakey : public WorldObject {
   NSEW facingDirection = NORTH;
@@ -78,6 +86,10 @@ class Shakey : public WorldObject {
 
     void setPosition(int x, int y) {
       this->position = Position(x, y);
+    }
+
+    void setPosition(Position position) {
+        this->position = position;
     }
 
     void turnRight() {
@@ -112,9 +124,31 @@ class Shakey : public WorldObject {
       position.print();
       cout << "Facing object: ???\n";
     }
-};
 
-typedef WorldObject * WorldMap[10][10];
+    void step(WorldMap worldMap) {
+        int x = this->position.getX();
+        int y = this->position.getY();
+        int newX = x, newY = y;
+        string facingDirection = this->getFacingDirection();
+        if (facingDirection == "NORTH") {
+            newX = x - 1;
+            newY = y;
+        } else if (facingDirection == "SOUTH") {
+            newX = x + 1;
+            newY = y;
+        } else if (facingDirection == "EAST") {
+            newX = x;
+            newY = y + 1;
+        } else {
+            newX = x;
+            newY = y - 1;
+        }
+        Position newPosition = Position(newX, newY);
+        worldMap[x][y] = new Space;
+        worldMap[newX][newY] = this;
+        this->position = newPosition;
+    }
+};
 
 int main() {
   cout << "Starting...\n";
@@ -187,6 +221,8 @@ int main() {
     } else if (cmd == "info") {
       myShakey.giveInfo();
       return 0;
+    } else if (cmd == "step") {
+      myShakey.step(worldMap);
     }
   } while (cmd != "exit");
 
