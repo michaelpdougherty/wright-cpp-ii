@@ -94,6 +94,10 @@ class Shakey : public WorldObject {
             }
         }
 
+        int getItemCount() {
+            return this->itemCount;
+        }
+
         void setPosition(int x, int y) {
             this->position = Position(x, y);
         }
@@ -115,7 +119,7 @@ class Shakey : public WorldObject {
             }
 
             if (this->standingOnItem) {
-                userMessage = "Shakey is standing on an item. Enter `pickup`!";
+                userMessage = this->getUserItemMessage();
             }
         }
 
@@ -131,7 +135,7 @@ class Shakey : public WorldObject {
                 facingDirection = NORTH;
             }
             if (this->standingOnItem) {
-                userMessage = "Shakey is standing on an item. Enter `pickup`!";
+                userMessage = this->getUserItemMessage();
             }
         }
 
@@ -141,8 +145,26 @@ class Shakey : public WorldObject {
                 this->itemCount++;
                 userMessage = "Shakey picked up the item!\nNow Shakey has " + to_string(this->itemCount) +  " item(s) in his little pouch!";
             } else {
-                userMessage = "Bozo! Shakey is not standing on an item.";
+                userMessage = "Oops, Shakey is not standing on an item.";
             }
+        }
+
+        void drop(WorldMap worldMap, string &userMessage) {
+            if (this->itemCount > 0) {
+                if (this->standingOnItem) {
+                    userMessage = "There is already an item here.";
+                } else {
+                    this->standingOnItem = true;
+                    this->itemCount--;
+                    userMessage = "Shakey dropped an item!\nNow Shakey has " + to_string(this->itemCount) +  " item(s) in his little pouch!";
+                }
+            } else {
+                userMessage = "Shakey has no items!";
+            }
+        }
+
+        string getUserItemMessage() {
+            return "Shakey is standing on an item. Enter `pickup` to pick it up!";
         }
 
         void moveTo(Position newPosition, WorldMap worldMap, string &userMessage) {
@@ -152,7 +174,7 @@ class Shakey : public WorldObject {
             if (symbolAtNewPosition != 'W') {
                 this->standingOnItem = symbolAtNewPosition == 'I';
                 if (this->standingOnItem) {
-                    userMessage = "Shakey is standing on an item. Enter `pickup`!";
+                    userMessage = this->getUserItemMessage();
                 }
                 worldMap[this->position.getX()][this->position.getY()] = !wasStandingOnItem ? new Space : new Space(true);
                 worldMap[newPosition.getX()][newPosition.getY()] = this;
@@ -233,7 +255,7 @@ int main() {
     string userMessage = "";
     do {
         system("clear");
-        cout << "Shakey is facing: " << myShakey.getFacingDirection() << endl;
+        cout << "Shakey is facing: " << myShakey.getFacingDirection() << "\t(Items: " + to_string(myShakey.getItemCount()) + ")" << endl;
         for (int x = 0; x < mapRowCount; x++) {
             for (int y = 0; y < mapColumnCount; y++) {
                 cout << ' ' << (worldMap[x][y])->getSymbol() << ' ';
@@ -262,7 +284,7 @@ int main() {
         } else if (cmd == "pickup") {
             myShakey.pickup(worldMap, userMessage);
         } else if (cmd == "drop") {
-            //myShakey.drop(worldMap, userMessage);
+            myShakey.drop(worldMap, userMessage);
         } else if (cmd == "home") {
             myShakey.home(worldMap, userMessage);
         }
