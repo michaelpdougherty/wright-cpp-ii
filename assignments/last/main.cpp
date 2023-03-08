@@ -94,7 +94,7 @@ class Shakey : public WorldObject {
         this->position = position;
     }
 
-    void turnRight() {
+    void turnRight(string &userMessage) {
       string strFacingDirection = getFacingDirection();
       if (strFacingDirection == "NORTH") {
         facingDirection = EAST;
@@ -105,9 +105,12 @@ class Shakey : public WorldObject {
       } else {
         facingDirection = NORTH;
       }
+      if (this->standingOnItem) {
+        userMessage = "Shakey is standing on an item. Enter `pickup`!";
+      }
     }
 
-    void turnLeft() {
+    void turnLeft(string &userMessage) {
       string strFacingDirection = getFacingDirection();
       if (strFacingDirection == "NORTH") {
         facingDirection = WEST;
@@ -117,6 +120,9 @@ class Shakey : public WorldObject {
         facingDirection = EAST;
       } else {
         facingDirection = NORTH;
+      }
+      if (this->standingOnItem) {
+        userMessage = "Shakey is standing on an item. Enter `pickup`!";
       }
     }
 
@@ -244,9 +250,9 @@ int main() {
     cout << "You entered: " << cmd << endl;
 
     if (cmd == "right") {
-      myShakey.turnRight();
+      myShakey.turnRight(userMessage);
     } else if (cmd == "left") {
-      myShakey.turnLeft();
+      myShakey.turnLeft(userMessage);
     } else if (cmd == "step") {
       myShakey.step(worldMap, userMessage);
     } else if (cmd == "pickup") {
