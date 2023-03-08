@@ -207,6 +207,7 @@ int main() {
 
   // run loop
   string cmd;
+  string errorMessage = "show error";
   do {
     system("clear");
     // print map
@@ -220,6 +221,14 @@ int main() {
     cout << "\n\n";
 
     cout << "Shakey is facing: " << myShakey.getFacingDirection() << endl;
+    if (errorMessage != "") {
+        cout << endl;
+        cout << "--------------------------" << endl;
+        cout << "Error: " << errorMessage << endl;
+        cout << "--------------------------" << endl << endl;
+    }
+    errorMessage = "";
+
     cout << "Please enter a command: ";
     cin >> cmd;
 
