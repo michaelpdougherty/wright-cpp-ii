@@ -136,6 +136,23 @@ class Shakey : public WorldObject {
         }
     }
 
+    void moveTo(Position newPosition, WorldMap worldMap, string &userMessage) {
+        WorldObject * thingAtPosition = worldMap[newPosition.getX()][newPosition.getY()];
+        char symbolAtNewPosition = thingAtPosition->getSymbol();
+        bool wasStandingOnItem = this->standingOnItem;
+        if (symbolAtNewPosition != 'W') {
+            this->standingOnItem = symbolAtNewPosition == 'I';
+            if (this->standingOnItem) {
+                userMessage = "Shakey is standing on an item. Enter `pickup`!";
+            }
+            worldMap[this->position.getX()][this->position.getY()] = !wasStandingOnItem ? new Space : new Space(true);
+            worldMap[newPosition.getX()][newPosition.getY()] = this;
+            this->position = newPosition;
+        } else {
+            userMessage = "Shakey cannot walk through walls, dummy!";
+        }
+    }
+
     void step(WorldMap worldMap, string &userMessage) {
         int x = this->position.getX();
         int y = this->position.getY();
@@ -154,25 +171,13 @@ class Shakey : public WorldObject {
             newX = x;
             newY = y - 1;
         }
-        Position newPosition = Position(newX, newY);
-        WorldObject * thingAtPosition = worldMap[newX][newY];
-        char symbolAtNewPosition = thingAtPosition->getSymbol();
-        bool wasStandingOnItem = this->standingOnItem;
-        if (symbolAtNewPosition != 'W') {
-            this->standingOnItem = symbolAtNewPosition == 'I';
-            if (this->standingOnItem) {
-                userMessage = "Shakey is standing on an item. Enter `pickup`!";
-            }
-            if (!wasStandingOnItem) {
-                worldMap[x][y] = new Space;
-            } else {
-                worldMap[x][y] = new Space(true);
-            }
-            worldMap[newX][newY] = this;
-            this->position = newPosition;
-        } else {
-            userMessage = "Shakey cannot walk through walls, dummy!";
-        }
+        this->moveTo(Position(newX, newY), worldMap, userMessage);
+    }
+
+    void home(WorldMap worldMap, string &userMessage) {
+        userMessage = "Shakey, I'm coming home!";
+        this->facingDirection = NORTH;
+        this->moveTo(Position(1, 1), worldMap, userMessage);
     }
 };
 
@@ -257,6 +262,8 @@ int main() {
       myShakey.step(worldMap, userMessage);
     } else if (cmd == "pickup") {
         myShakey.pickup(worldMap, userMessage);
+    } else if (cmd == "home") {
+        myShakey.home(worldMap, userMessage);
     }
   } while (cmd != "exit");
 
