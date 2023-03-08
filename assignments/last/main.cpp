@@ -67,6 +67,7 @@ class Shakey : public WorldObject {
   NSEW facingDirection = NORTH;
   Position position;
   bool standingOnItem = false;
+  int itemCount = 0;
   public:
     string getFacingDirection() {
       return directions[facingDirection];
@@ -119,14 +120,17 @@ class Shakey : public WorldObject {
       }
     }
 
-    void giveInfo() {
-      cout << "Here's what Shakey knows:\n";
-      cout << "Current position:\n";
-      position.print();
-      cout << "Facing object: ???\n";
+    void pickup(WorldMap worldMap, string &userMessage) {
+        if (this->standingOnItem) {
+            this->standingOnItem = false;
+            this->itemCount++;
+            userMessage = "Shakey picked up the item!\nNow Shakey has " + to_string(this->itemCount) +  " item(s) in his little pouch!";
+        } else {
+            userMessage = "Bozo! Shakey is not standing on an item.";
+        }
     }
 
-    void step(WorldMap worldMap) {
+    void step(WorldMap worldMap, string &userMessage) {
         int x = this->position.getX();
         int y = this->position.getY();
         int newX = x, newY = y;
@@ -150,6 +154,9 @@ class Shakey : public WorldObject {
         bool wasStandingOnItem = this->standingOnItem;
         if (symbolAtNewPosition != 'W') {
             this->standingOnItem = symbolAtNewPosition == 'I';
+            if (this->standingOnItem) {
+                userMessage = "Shakey is standing on an item. Enter `pickup`!";
+            }
             if (!wasStandingOnItem) {
                 worldMap[x][y] = new Space;
             } else {
@@ -157,6 +164,8 @@ class Shakey : public WorldObject {
             }
             worldMap[newX][newY] = this;
             this->position = newPosition;
+        } else {
+            userMessage = "Shakey cannot walk through walls, dummy!";
         }
     }
 };
@@ -167,12 +176,12 @@ int main() {
   // declare map scheme
   char mapScheme[10][10] = {
     { 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W' },
-    { 'W', 'S', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W' },
-    { 'W', ' ', ' ', ' ', ' ', 'W', ' ', ' ', ' ', 'W' },
-    { 'W', ' ', ' ', 'I', ' ', ' ', ' ', ' ', ' ', 'W' },
-    { 'W', ' ', 'W', ' ', ' ', ' ', ' ', ' ', ' ', 'W' },
+    { 'W', 'S', ' ', 'I', ' ', 'I', ' ', ' ', ' ', 'W' },
+    { 'W', ' ', ' ', 'I', ' ', 'I', ' ', ' ', ' ', 'W' },
+    { 'W', 'I', 'I', 'I', ' ', 'I', ' ', ' ', ' ', 'W' },
+    { 'W', ' ', 'W', ' ', ' ', 'I', ' ', ' ', ' ', 'W' },
+    { 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W' },
     { 'W', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W' },
-    { 'W', ' ', ' ', ' ', 'W', ' ', ' ', ' ', ' ', 'W' },
     { 'W', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W' },
     { 'W', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W' },
     { 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W' },
@@ -207,27 +216,26 @@ int main() {
 
   // run loop
   string cmd;
-  string errorMessage = "show error";
+  string userMessage = "";
   do {
     system("clear");
-    // print map
+    cout << "Shakey is facing: " << myShakey.getFacingDirection() << endl;
     for (int x = 0; x < 10; x++) {
       for (int y = 0; y < 10; y++) {
         cout << ' ' << (worldMap[x][y])->getSymbol() << ' ';
       }
       cout << endl;
     }
-
     cout << "\n\n";
 
-    cout << "Shakey is facing: " << myShakey.getFacingDirection() << endl;
-    if (errorMessage != "") {
+    // show optional user message
+    if (userMessage != "") {
         cout << endl;
-        cout << "--------------------------" << endl;
-        cout << "Error: " << errorMessage << endl;
-        cout << "--------------------------" << endl << endl;
+        cout << "----------------------------------------------------" << endl;
+        cout << userMessage << endl;
+        cout << "----------------------------------------------------" << endl << endl;
     }
-    errorMessage = "";
+    userMessage = "";
 
     cout << "Please enter a command: ";
     cin >> cmd;
@@ -238,11 +246,10 @@ int main() {
       myShakey.turnRight();
     } else if (cmd == "left") {
       myShakey.turnLeft();
-    } else if (cmd == "info") {
-      myShakey.giveInfo();
-      return 0;
     } else if (cmd == "step") {
-      myShakey.step(worldMap);
+      myShakey.step(worldMap, userMessage);
+    } else if (cmd == "pickup") {
+        myShakey.pickup(worldMap, userMessage);
     }
   } while (cmd != "exit");
 
