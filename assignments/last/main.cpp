@@ -2,8 +2,13 @@
 #include <string>
 #include <map>
 using namespace std;
+/**
+  * Michael Dougherty
+  * CIS 242 - C++ 2
+  * Final Project - Shakey the Robot
+  * Tue Mar 7 2023
+  */
 
-// directional values
 enum NSEW { NORTH, SOUTH, EAST, WEST };
 map<NSEW, string> directions = {
     { NORTH, "NORTH" },
