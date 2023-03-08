@@ -237,6 +237,7 @@ int main() {
     }
     userMessage = "";
 
+    cout << "Options: [right, left, step, pickup]\n\n";
     cout << "Please enter a command: ";
     cin >> cmd;
 
