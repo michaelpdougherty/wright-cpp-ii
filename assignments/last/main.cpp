@@ -66,6 +66,7 @@ typedef WorldObject * WorldMap[10][10];
 class Shakey : public WorldObject {
   NSEW facingDirection = NORTH;
   Position position;
+  bool standingOnItem = false;
   public:
     string getFacingDirection() {
       return directions[facingDirection];
@@ -144,9 +145,19 @@ class Shakey : public WorldObject {
             newY = y - 1;
         }
         Position newPosition = Position(newX, newY);
-        worldMap[x][y] = new Space;
-        worldMap[newX][newY] = this;
-        this->position = newPosition;
+        WorldObject * thingAtPosition = worldMap[newX][newY];
+        char symbolAtNewPosition = thingAtPosition->getSymbol();
+        bool wasStandingOnItem = this->standingOnItem;
+        if (symbolAtNewPosition != 'W') {
+            this->standingOnItem = symbolAtNewPosition == 'I';
+            if (!wasStandingOnItem) {
+                worldMap[x][y] = new Space;
+            } else {
+                worldMap[x][y] = new Space(true);
+            }
+            worldMap[newX][newY] = this;
+            this->position = newPosition;
+        }
     }
 };
 
